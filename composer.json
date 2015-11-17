@@ -1,0 +1,39 @@
+{
+    "name": "paybreak/api-client",
+    "description": "PHP ApiClient Library",
+    "keywords": [
+        "api-client"
+    ],
+    "homepage": "https://github.com/PayBreak/api-client",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "PayBreak",
+            "email": "dev@paybreak.com",
+            "homepage": "https://github.com/PayBreak",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : ">=5.5.0",
+        "guzzlehttp/guzzle": "~6.0",
+        "paybreak/foundation": "^0.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "scrutinizer/ocular": "~1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PayBreak\\ApiClient\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PayBreak\\ApiClient\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
