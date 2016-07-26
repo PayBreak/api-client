@@ -38,7 +38,7 @@ abstract class AbstractApiClient
      * @param LoggerInterface $logger
      * @param array $headers
      */
-    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = null)
+    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
         $this->client = new Client($config);
         $this->logger = $logger;
