@@ -1,3 +1,9 @@
+# 0.2.0
+2016-07-26
+
+## Features
+- Added headers support
+
 # 0.1.1
 2016-02-22
 
