@@ -30,16 +30,19 @@ abstract class AbstractApiClient
 
     private $client;
     private $logger;
+    private $headers;
 
     /**
      * @author WN
      * @param array $config
      * @param LoggerInterface $logger
+     * @param array $headers
      */
-    public function __construct(array $config = [], LoggerInterface $logger = null)
+    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
         $this->client = new Client($config);
         $this->logger = $logger;
+        $this->headers = $headers;
     }
 
     /**
@@ -60,13 +63,14 @@ abstract class AbstractApiClient
      * @author WN
      * @param $uri
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    public function get($uri, array $query = [])
+    public function get($uri, array $query = [], array $headers = [])
     {
-        return $this->send((new Request('GET', $uri)), [], $query);
+        return $this->send((new Request('GET', $uri)), [], $query, $headers);
     }
 
     /**
@@ -74,13 +78,14 @@ abstract class AbstractApiClient
      * @param $uri
      * @param array $body
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    public function post($uri, array $body = [], array $query = [])
+    public function post($uri, array $body = [], array $query = [], array $headers = [])
     {
-        return $this->send((new Request('POST', $uri)), $body, $query);
+        return $this->send((new Request('POST', $uri)), $body, $query, $headers);
     }
 
     /**
@@ -88,13 +93,14 @@ abstract class AbstractApiClient
      * @param $uri
      * @param array $body
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    public function put($uri, array $body = [], array $query = [])
+    public function put($uri, array $body = [], array $query = [], array $headers = [])
     {
-        return $this->send((new Request('PUT', $uri)), $body, $query);
+        return $this->send((new Request('PUT', $uri)), $body, $query, $headers);
     }
 
     /**
@@ -102,26 +108,28 @@ abstract class AbstractApiClient
      * @param $uri
      * @param array $body
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    public function patch($uri, array $body = [], array $query = [])
+    public function patch($uri, array $body = [], array $query = [], array $headers = [])
     {
-        return $this->send((new Request('PATCH', $uri)), $body, $query);
+        return $this->send((new Request('PATCH', $uri)), $body, $query, $headers);
     }
 
     /**
      * @author WN
      * @param $uri
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    public function delete($uri, array $query = [])
+    public function delete($uri, array $query = [], array $headers = [])
     {
-        return $this->send((new Request('DELETE', $uri)), [], $query);
+        return $this->send((new Request('DELETE', $uri)), [], $query, $headers);
     }
 
     /**
@@ -129,14 +137,16 @@ abstract class AbstractApiClient
      * @param RequestInterface $request
      * @param array $body
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    private function send(RequestInterface $request, array $body = [], array $query = [])
+    private function send(RequestInterface $request, array $body = [], array $query = [], array $headers = [])
     {
         $options = $this->processRequestBody($body);
         $this->processQuery($query, $options);
+        $this->processHeaders($headers, $options);
 
         try {
             $response = $this->client->send($request, $options);
@@ -182,6 +192,20 @@ abstract class AbstractApiClient
     {
         if (count($query) > 0) {
             $options['query'] = $query;
+        }
+    }
+
+    /**
+     * @author WN
+     * @param array $headers
+     * @param array $options
+     */
+    private function processHeaders(array $headers, array &$options)
+    {
+        $headers = array_merge($this->headers, $headers);
+
+        if (count($headers) > 0) {
+            $options['headers'] = $headers;
         }
     }
 
