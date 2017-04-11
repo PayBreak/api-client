@@ -40,9 +40,21 @@ abstract class AbstractApiClient
      */
     public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
-        $this->client = new Client($config);
+        $this->client = $this->initialiseClient($config);
         $this->logger = $logger;
         $this->headers = $headers;
+    }
+
+    /**
+     * Initialise a Guzzle Client which uses the retry middleware
+     *
+     * @author JH
+     * @param array $config
+     * @return Client
+     */
+    protected function initialiseClient(array $config = [])
+    {
+        return new Client($config);
     }
 
     /**
