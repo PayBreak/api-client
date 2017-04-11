@@ -60,7 +60,6 @@ class RetryApiClient extends ApiClient
     protected function retryDecider()
     {
         return function ($retries, RequestInterface $request, ResponseInterface $response = null) {
-
             if ($retries >= self::RETRY_ATTEMPTS) {
                 return false;
             }

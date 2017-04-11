@@ -163,22 +163,16 @@ abstract class AbstractApiClient
         try {
             $response = $this->client->send($request, $options);
             return $this->processResponse($response);
-
         } catch (Exception\ClientException $e) {
-
             $this->processErrorResponse($e->getResponse());
             throw $e;
-
         } catch (Exception\BadResponseException $e) {
-
             $this->logError(
                 'Api Bad Response from [' . $request->getUri() . '] Failed[' . $e->getResponse()->getStatusCode() . ']',
                 $this->formatBadResponseException($e)
             );
             throw $e;
-
         } catch (Exception\RequestException $e) {
-
             $this->logError(
                 'Api problem with request to [' . $request->getUri() . ']',
                 $this->formatRequestException($e)
