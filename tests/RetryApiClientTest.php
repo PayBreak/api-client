@@ -11,10 +11,8 @@
 
 namespace Tests\ApiClient;
 
-use GuzzleHttp\Handler\MockHandler;
 use PayBreak\ApiClient\RetryApiClient;
 use PayBreak\ApiClient\Test\TestLogger;
-use GuzzleHttp\Psr7\Response;
 use Psr\Log\LogLevel;
 
 /**
