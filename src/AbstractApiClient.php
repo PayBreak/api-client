@@ -53,7 +53,11 @@ abstract class AbstractApiClient
     private function initialiseClient(array $config = [])
     {
         $this->configure($config);
-        $client = $this->getClient();
+        $client = $this->getApiClient();
+
+        if (!in_array(ApiClientInterface::class, class_implements($client))) {
+            throw new \Exception($client . ' does not implement ApiClientInterface');
+        }
 
         try {
             $api = new $client($config);
@@ -65,19 +69,12 @@ abstract class AbstractApiClient
     }
 
     /**
-     * @author
+     * @author JH
      * @return string FQCN of class implementing ClientInterface
-     * @throws \Exception
      */
-    protected function getClient()
+    protected function getApiClient()
     {
-        $client =  GuzzleWrapper::class;
-
-        if (!in_array(ApiClientInterface::class, class_implements($client))) {
-            throw new \Exception($client . ' does not implement ApiClientInterface');
-        }
-
-        return $client;
+        return GuzzleWrapper::class;
     }
 
     /**
