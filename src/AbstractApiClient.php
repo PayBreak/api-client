@@ -38,23 +38,23 @@ abstract class AbstractApiClient
      * @param array $headers
      * @param string $client
      */
-    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [], $client = GuzzleWrapper::class)
+    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
-        $this->client = $this->initialiseClient($client, $config);
+        $this->client = $this->initialiseClient($config);
         $this->logger = $logger;
         $this->headers = $headers;
     }
 
     /**
      * @author JH
-     * @param string $client FQCN of class implementing ClientInterface
      * @param array $config
      * @return ApiClientInterface
      * @throws \Exception
      */
-    private function initialiseClient($client, array $config = [])
+    private function initialiseClient(array $config = [])
     {
         $this->configure($config);
+        $client = $this->getClient();
 
         try {
             $api = new $client($config);
@@ -67,6 +67,15 @@ abstract class AbstractApiClient
         }
 
         return $api;
+    }
+
+    /**
+     * @author
+     * @return string FQCN of class implementing ClientInterface
+     */
+    protected function getClient()
+    {
+        return GuzzleWrapper::class;
     }
 
     /**
