@@ -47,7 +47,7 @@ abstract class AbstractApiClient
 
     /**
      * @author JH
-     * @param string $client FQCN of client class
+     * @param string $client FQCN of class implementing ClientInterface
      * @param array $config
      * @return ApiClientInterface
      * @throws \Exception
