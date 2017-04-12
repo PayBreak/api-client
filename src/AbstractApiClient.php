@@ -10,7 +10,6 @@
 
 namespace PayBreak\ApiClient;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
@@ -37,24 +36,48 @@ abstract class AbstractApiClient
      * @param array $config
      * @param LoggerInterface $logger
      * @param array $headers
+     * @param string $client
      */
-    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
+    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [], $client = GuzzleWrapper::CLASS)
     {
-        $this->client = $this->initialiseClient($config);
+        $this->client = $this->initialiseClient($client, $config);
         $this->logger = $logger;
         $this->headers = $headers;
     }
 
     /**
-     * Initialise a Guzzle Client which uses the retry middleware
+     * @author JH
+     * @param string $client FQCN of client class
+     * @param array $config
+     * @return ApiClientInterface
+     * @throws \Exception
+     */
+    protected function initialiseClient($client, array $config = [])
+    {
+        $this->configure($config);
+
+        try {
+            $api = new $client($config);
+
+            if (!$api instanceof ApiClientInterface) {
+                throw new \Exception($client . ' does not implement ApiClientInterface');
+            }
+        } catch (\Exception $e) {
+            throw new \Exception('Invalid client');
+        }
+
+        return $api;
+    }
+
+    /**
+     * Perform any additional api client configuration
      *
      * @author JH
      * @param array $config
-     * @return Client
      */
-    protected function initialiseClient(array $config = [])
+    protected function configure(array &$config = [])
     {
-        return new Client($config);
+        //
     }
 
     /**

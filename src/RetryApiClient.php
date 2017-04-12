@@ -21,7 +21,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class RetryApiClient extends AbstractRetryApiClient
 {
-    const RETRY_ATTEMPTS = 3;
     /**
      * Determine whether the request needs to be retried or not
      *
@@ -48,24 +47,13 @@ class RetryApiClient extends AbstractRetryApiClient
                         $request->getMethod(),
                         $request->getUri(),
                         $retries + 1,
-                        self::RETRY_ATTEMPTS,
+                        static::RETRY_ATTEMPTS,
                         $response ? 'status code: ' . $response->getStatusCode() : ''
                     ));
             }
 
             return $shouldRetry;
         };
-    }
-
-    /**
-     * The number of times to retry an unsuccessful request
-     *
-     * @author JH
-     * @return int
-     */
-    protected function getMaxRetries()
-    {
-        return self::RETRY_ATTEMPTS;
     }
 
     /**

@@ -10,7 +10,6 @@
 
 namespace PayBreak\ApiClient;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -23,16 +22,19 @@ use GuzzleHttp\Middleware;
  */
 abstract class AbstractRetryApiClient extends AbstractApiClient
 {
+    // Number of times to retry.
+    // This can be overridden on the child class
+    const RETRY_ATTEMPTS = 3;
+
     /**
-     * Initialise a Guzzle Client which uses the retry middleware
+     * Set up retry middleware
      *
      * @author JH
      * @param array $config
-     * @return Client
      */
-    protected function initialiseClient(array $config = [])
+    protected function configure(array &$config = [])
     {
-        if (!isset($config['handler'])) {
+        if (!isset($config['handler']) || !$config['handler'] instanceof HandlerStack) {
             $handlerStack = HandlerStack::create(new CurlHandler());
             $handlerStack->push(
                 Middleware::retry(
@@ -42,8 +44,6 @@ abstract class AbstractRetryApiClient extends AbstractApiClient
 
             $config['handler'] = $handlerStack;
         }
-
-        return new Client($config);
     }
 
     /**
@@ -60,5 +60,8 @@ abstract class AbstractRetryApiClient extends AbstractApiClient
      * @author JH
      * @return int
      */
-    abstract protected function getMaxRetries();
+    protected function getMaxRetries()
+    {
+        return static::RETRY_ATTEMPTS;
+    }
 }
