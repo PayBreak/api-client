@@ -52,7 +52,7 @@ abstract class AbstractApiClient
      * @return ApiClientInterface
      * @throws \Exception
      */
-    protected function initialiseClient($client, array $config = [])
+    private function initialiseClient($client, array $config = [])
     {
         $this->configure($config);
 
