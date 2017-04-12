@@ -36,7 +36,6 @@ abstract class AbstractApiClient
      * @param array $config
      * @param LoggerInterface $logger
      * @param array $headers
-     * @param string $client
      */
     public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
@@ -58,10 +57,6 @@ abstract class AbstractApiClient
 
         try {
             $api = new $client($config);
-
-            if (!$api instanceof ApiClientInterface) {
-                throw new \Exception($client . ' does not implement ApiClientInterface');
-            }
         } catch (\Exception $e) {
             throw new \Exception('Invalid Api Client: ' . $client);
         }
@@ -72,10 +67,17 @@ abstract class AbstractApiClient
     /**
      * @author
      * @return string FQCN of class implementing ClientInterface
+     * @throws \Exception
      */
     protected function getClient()
     {
-        return GuzzleWrapper::class;
+        $client =  GuzzleWrapper::class;
+
+        if (!in_array(ApiClientInterface::class, class_implements($client))) {
+            throw new \Exception($client . ' does not implement ApiClientInterface');
+        }
+
+        return $client;
     }
 
     /**
