@@ -28,7 +28,8 @@ class RetryApiClientTest extends \PHPUnit_Framework_TestCase
     public function testMake()
     {
         $client = RetryApiClient::make('http://httpbin.org/');
-        $this->assertInstanceOf('PayBreak\ApiClient\ApiClient', $client);
+        $this->assertInstanceOf('PayBreak\ApiClient\AbstractApiClient', $client);
+        $this->assertInstanceOf('PayBreak\ApiClient\AbstractRetryApiClient', $client);
         $this->assertInstanceOf('PayBreak\ApiClient\RetryApiClient', $client);
     }
 

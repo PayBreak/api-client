@@ -10,13 +10,8 @@
 
 namespace PayBreak\ApiClient;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\CurlHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class RetryApiClient
@@ -24,33 +19,9 @@ use Psr\Log\LoggerInterface;
  * @author JH
  * @package PayBreak\ApiClient
  */
-class RetryApiClient extends ApiClient
+class RetryApiClient extends AbstractRetryApiClient
 {
     const RETRY_ATTEMPTS = 3;
-
-    /**
-     * Initialise a Guzzle Client which uses the retry middleware
-     *
-     * @author JH
-     * @param array $config
-     * @return Client
-     */
-    protected function initialiseClient(array $config = [])
-    {
-        if (!isset($config['handler'])) {
-            $handlerStack = HandlerStack::create(new CurlHandler());
-            $handlerStack->push(
-                Middleware::retry(
-                    $this->retryDecider()
-                )
-            );
-
-            $config['handler'] = $handlerStack;
-        }
-
-        return new Client($config);
-    }
-
     /**
      * Determine whether the request needs to be retried or not
      *
@@ -60,7 +31,7 @@ class RetryApiClient extends ApiClient
     protected function retryDecider()
     {
         return function ($retries, RequestInterface $request, ResponseInterface $response = null) {
-            if ($retries >= self::RETRY_ATTEMPTS) {
+            if ($retries >= $this->getMaxRetries()) {
                 return false;
             }
 
@@ -84,5 +55,55 @@ class RetryApiClient extends ApiClient
 
             return $shouldRetry;
         };
+    }
+
+    /**
+     * The number of times to retry an unsuccessful request
+     *
+     * @author JH
+     * @return int
+     */
+    protected function getMaxRetries()
+    {
+        return self::RETRY_ATTEMPTS;
+    }
+
+    /**
+     * @author WN
+     * @param array $body
+     * @return array
+     */
+    protected function processRequestBody(array $body)
+    {
+        return ['json' => $body];
+    }
+
+    /**
+     * @author WN
+     * @param ResponseInterface $response
+     * @return array
+     * @throws WrongResponseException
+     */
+    protected function processResponse(ResponseInterface $response)
+    {
+        if ($responseBody = json_decode($response->getBody()->getContents(), true)) {
+            return $responseBody;
+        }
+
+        throw new WrongResponseException('Response body was malformed JSON', $response->getStatusCode());
+    }
+
+    /**
+     * @author WN
+     * @param ResponseInterface $response
+     * @throws ErrorResponseException
+     */
+    protected function processErrorResponse(ResponseInterface $response)
+    {
+        if (($responseBody = json_decode($response->getBody()->getContents(), true)) &&
+            array_key_exists('message', $responseBody)
+        ) {
+            throw new ErrorResponseException($responseBody['message'], $response->getStatusCode());
+        }
     }
 }
