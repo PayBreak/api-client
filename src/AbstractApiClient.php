@@ -38,7 +38,7 @@ abstract class AbstractApiClient
      * @param array $headers
      * @param string $client
      */
-    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [], $client = GuzzleWrapper::CLASS)
+    public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [], $client = GuzzleWrapper::class)
     {
         $this->client = $this->initialiseClient($client, $config);
         $this->logger = $logger;
