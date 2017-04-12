@@ -63,7 +63,7 @@ abstract class AbstractApiClient
                 throw new \Exception($client . ' does not implement ApiClientInterface');
             }
         } catch (\Exception $e) {
-            throw new \Exception('Invalid client');
+            throw new \Exception('Invalid Api Client: ' . $client);
         }
 
         return $api;
