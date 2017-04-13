@@ -10,16 +10,52 @@
 
 namespace PayBreak\ApiClient;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Api Client
+ * Class RetryApiClient
  *
- * @author WN
+ * @author JH
  * @package PayBreak\ApiClient
  */
-class ApiClient extends AbstractApiClient
+class RetryApiClient extends AbstractRetryApiClient
 {
+    /**
+     * Determine whether the request needs to be retried or not
+     *
+     * @author JH
+     * @return \Closure
+     */
+    protected function retryDecider()
+    {
+        return function ($retries, RequestInterface $request, ResponseInterface $response = null) {
+            if ($retries >= $this->getMaxRetries()) {
+                return false;
+            }
+
+            $shouldRetry = false;
+            // Retry on server errors
+            if (isset($response) && $response->getStatusCode() >= 500) {
+                $shouldRetry = true;
+            }
+
+            if ($shouldRetry) {
+                $this->logNotice(
+                    sprintf(
+                        'Retrying %s %s %s/%s, %s',
+                        $request->getMethod(),
+                        $request->getUri(),
+                        $retries + 1,
+                        $this->getMaxRetries(),
+                        $response ? 'status code: ' . $response->getStatusCode() : ''
+                    ));
+            }
+
+            return $shouldRetry;
+        };
+    }
+
     /**
      * @author WN
      * @param array $body

@@ -11,6 +11,7 @@
 namespace PayBreak\ApiClient;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
@@ -37,12 +38,29 @@ abstract class AbstractApiClient
      * @param array $config
      * @param LoggerInterface $logger
      * @param array $headers
+     * @throws \Exception
      */
     public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
-        $this->client = new Client($config);
+        $this->client = $this->initialiseClient($config);
+
+        if (!$this->client instanceof ClientInterface) {
+            throw new \Exception('Implementation of AbstractApiClient must implement '. ClientInterface::class);
+        }
+
         $this->logger = $logger;
         $this->headers = $headers;
+    }
+
+    /**
+     * @author JH
+     * @param array $config
+     * @return GuzzleHttp\ClientInterface
+     * @throws \Exception
+     */
+    protected function initialiseClient(array $config = [])
+    {
+        return new Client($config);
     }
 
     /**
@@ -151,22 +169,16 @@ abstract class AbstractApiClient
         try {
             $response = $this->client->send($request, $options);
             return $this->processResponse($response);
-
         } catch (Exception\ClientException $e) {
-
             $this->processErrorResponse($e->getResponse());
             throw $e;
-
         } catch (Exception\BadResponseException $e) {
-
             $this->logError(
                 'Api Bad Response from [' . $request->getUri() . '] Failed[' . $e->getResponse()->getStatusCode() . ']',
                 $this->formatBadResponseException($e)
             );
             throw $e;
-
         } catch (Exception\RequestException $e) {
-
             $this->logError(
                 'Api problem with request to [' . $request->getUri() . ']',
                 $this->formatRequestException($e)
