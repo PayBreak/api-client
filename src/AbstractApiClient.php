@@ -10,6 +10,8 @@
 
 namespace PayBreak\ApiClient;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
@@ -36,10 +38,16 @@ abstract class AbstractApiClient
      * @param array $config
      * @param LoggerInterface $logger
      * @param array $headers
+     * @throws \Exception
      */
     public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
         $this->client = $this->initialiseClient($config);
+
+        if (!$this->client instanceof ClientInterface) {
+            throw new \Exception('Implementation of AbstractApiClient must implement '. ClientInterface::class);
+        }
+
         $this->logger = $logger;
         $this->headers = $headers;
     }
@@ -47,45 +55,12 @@ abstract class AbstractApiClient
     /**
      * @author JH
      * @param array $config
-     * @return ApiClientInterface
+     * @return GuzzleHttp\ClientInterface
      * @throws \Exception
      */
-    private function initialiseClient(array $config = [])
+    protected function initialiseClient(array $config = [])
     {
-        $this->configure($config);
-        $client = $this->getApiClient();
-
-        if (!in_array(ApiClientInterface::class, class_implements($client))) {
-            throw new \Exception($client . ' does not implement ApiClientInterface');
-        }
-
-        try {
-            $api = new $client($config);
-        } catch (\Exception $e) {
-            throw new \Exception('Invalid Api Client: ' . $client);
-        }
-
-        return $api;
-    }
-
-    /**
-     * @author JH
-     * @return string FQCN of class implementing ClientInterface
-     */
-    protected function getApiClient()
-    {
-        return GuzzleWrapper::class;
-    }
-
-    /**
-     * Perform any additional api client configuration
-     *
-     * @author JH
-     * @param array $config
-     */
-    protected function configure(array &$config = [])
-    {
-        //
+        return new Client($config);
     }
 
     /**

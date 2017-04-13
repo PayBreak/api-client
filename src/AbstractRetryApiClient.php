@@ -10,6 +10,7 @@
 
 namespace PayBreak\ApiClient;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -31,8 +32,9 @@ abstract class AbstractRetryApiClient extends AbstractApiClient
      *
      * @author JH
      * @param array $config
+     * @return GuzzleHttp\ClientInterface
      */
-    protected function configure(array &$config = [])
+    protected function initialiseClient(array $config = [])
     {
         if (!isset($config['handler']) || !$config['handler'] instanceof HandlerStack) {
             $handlerStack = HandlerStack::create(new CurlHandler());
@@ -44,6 +46,8 @@ abstract class AbstractRetryApiClient extends AbstractApiClient
 
             $config['handler'] = $handlerStack;
         }
+
+        return new Client($config);
     }
 
     /**
