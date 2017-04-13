@@ -47,7 +47,7 @@ class RetryApiClient extends AbstractRetryApiClient
                         $request->getMethod(),
                         $request->getUri(),
                         $retries + 1,
-                        static::RETRY_ATTEMPTS,
+                        $this->getMaxRetries(),
                         $response ? 'status code: ' . $response->getStatusCode() : ''
                     ));
             }
