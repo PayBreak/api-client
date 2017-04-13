@@ -1,3 +1,6 @@
+## Added
+- Added `RetryApiClient` which extends `ApiClient` to retry failed requests multiple times (143412155)
+
 # 0.2.0
 2016-07-26
 
