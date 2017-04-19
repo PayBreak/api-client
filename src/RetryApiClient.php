@@ -80,7 +80,7 @@ class RetryApiClient extends AbstractRetryApiClient
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
-        if (!is_null($responseBody)) {
+        if (is_array($responseBody)) {
             return $responseBody;
         }
 
