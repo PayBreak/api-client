@@ -38,7 +38,9 @@ class ApiClient extends AbstractApiClient
      */
     protected function processResponse(ResponseInterface $response)
     {
-        if ($responseBody = json_decode($response->getBody()->getContents(), true)) {
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+
+        if (!is_null($responseBody)) {
             return $responseBody;
         }
 
