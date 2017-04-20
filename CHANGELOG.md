@@ -1,5 +1,6 @@
-## Added
+## Features
 - Added `RetryApiClient` which extends `ApiClient` to retry failed requests multiple times (143412155)
+- Updated `ApiClient` implementations so that they can handle empty JSON responses for `HTTP 204`
 
 # 0.2.0
 2016-07-26
