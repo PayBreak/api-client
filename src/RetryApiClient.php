@@ -74,7 +74,13 @@ class RetryApiClient extends AbstractRetryApiClient
      */
     protected function processResponse(ResponseInterface $response)
     {
-        if ($responseBody = json_decode($response->getBody()->getContents(), true)) {
+        if ($response->getStatusCode() == 204) {
+            return [];
+        }
+
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+
+        if (is_array($responseBody)) {
             return $responseBody;
         }
 
