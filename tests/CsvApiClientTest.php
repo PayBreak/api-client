@@ -11,7 +11,7 @@
 namespace Tests\ApiClient;
 
 use PayBreak\ApiClient\CsvApiClient;
-use PayBreak\ApiClient\WrongResponseException;
+use GuzzleHttp\Exception\ClientException;
 
 /**
  * Csv Api Client Test
@@ -21,7 +21,7 @@ use PayBreak\ApiClient\WrongResponseException;
  */
 class CsvApiClientTest extends \PHPUnit_Framework_TestCase
 {
-    private $sampleCsvPath = 'http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv';
+    private $sampleCsvPath = 'http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions';
 
     public function testMake()
     {
@@ -33,8 +33,8 @@ class CsvApiClientTest extends \PHPUnit_Framework_TestCase
     public function testExceptionIsThrownWhenResponseIsNotCsv()
     {
         $client = CsvApiClient::make('http://httpbin.org/');
-
-        $this->setExpectedException(WrongResponseException::class);
+        
+        $this->setExpectedException(ClientException::class);
         $client->get('get');
     }
 

@@ -37,4 +37,18 @@ class CsvApiClient extends ApiClient
 
         throw new WrongResponseException('Response body was malformed csv', $response->getStatusCode());
     }
+
+    /**
+     * @author EA
+     * @param string $uri
+     * @param array $body
+     * @param array $query
+     * @return array
+     * @throws ErrorResponseException
+     * @throws \Exception
+     */
+    public function get($uri, array $body = [], array $query = [])
+    {
+        return parent::get($uri . '.csv', $body, $query);
+    }
 }
