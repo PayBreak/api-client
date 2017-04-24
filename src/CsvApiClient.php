@@ -41,14 +41,14 @@ class CsvApiClient extends ApiClient
     /**
      * @author EA
      * @param string $uri
-     * @param array $body
      * @param array $query
+     * @param array $headers
      * @return array
      * @throws ErrorResponseException
      * @throws \Exception
      */
-    public function get($uri, array $body = [], array $query = [])
+    public function get($uri, array $query = [], array $headers = [])
     {
-        return parent::get($uri . '.csv', $body, $query);
+        return parent::get($uri . '.csv', $query, $headers);
     }
 }
