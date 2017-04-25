@@ -49,6 +49,10 @@ class CsvApiClient extends ApiClient
      */
     public function get($uri, array $query = [], array $headers = [])
     {
-        return parent::get($uri . '.csv', $query, $headers);
+        if (substr($uri, -4) !== '.csv') {
+            $uri .= '.csv';
+        }
+
+        return parent::get($uri, $query, $headers);
     }
 }

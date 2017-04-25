@@ -21,7 +21,7 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CsvApiClientTest extends \PHPUnit_Framework_TestCase
 {
-    private $sampleCsvPath = 'http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions';
+    private $sampleCsvPath = 'http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv';
 
     public function testMake()
     {
@@ -33,7 +33,7 @@ class CsvApiClientTest extends \PHPUnit_Framework_TestCase
     public function testExceptionIsThrownWhenResponseIsNotCsv()
     {
         $client = CsvApiClient::make('http://httpbin.org/');
-        
+
         $this->setExpectedException(ClientException::class);
         $client->get('get');
     }
