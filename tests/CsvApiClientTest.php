@@ -12,6 +12,9 @@ namespace Tests\ApiClient;
 
 use PayBreak\ApiClient\CsvApiClient;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Csv Api Client Test
@@ -21,8 +24,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CsvApiClientTest extends \PHPUnit_Framework_TestCase
 {
-    private $sampleCsvPath = 'http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv';
-
     public function testMake()
     {
         $client = CsvApiClient::make('http://httpbin.org/');
@@ -40,8 +41,12 @@ class CsvApiClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCsv()
     {
-        $client = new CsvApiClient();
-        $response = $client->get($this->sampleCsvPath);
+        $mock = new MockHandler([
+            new Response(200, ['Content-Type' => 'text/csv']),
+        ]);
+
+        $client = new CsvApiClient(['handler' => HandlerStack::create($mock)]);
+        $response = $client->get('http://example.com/test.csv');
         $this->assertArrayHasKey('csv', $response);
     }
 }
