@@ -1,3 +1,9 @@
+# 0.3.1
+2017-04-27
+
+### Fixed
+- Now using Guzzle MockHandler to simulate csv download instead of downloading from an external url
+
 # 0.3.0
 2017-04-26
 
