@@ -55,7 +55,7 @@ abstract class AbstractApiClient
     /**
      * @author JH
      * @param array $config
-     * @return GuzzleHttp\ClientInterface
+     * @return \GuzzleHttp\ClientInterface
      * @throws \Exception
      */
     protected function initialiseClient(array $config = [])
@@ -168,9 +168,9 @@ abstract class AbstractApiClient
 
         try {
             $response = $this->client->send($request, $options);
-            return $this->processResponse($response);
+            return $this->processResponse($response, $request);
         } catch (Exception\ClientException $e) {
-            $this->processErrorResponse($e->getResponse());
+            $this->processErrorResponse($e->getResponse(), $request);
             throw $e;
         } catch (Exception\BadResponseException $e) {
             $this->logError(
@@ -271,15 +271,17 @@ abstract class AbstractApiClient
     /**
      * @author WN
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @return array
      * @throws WrongResponseException
      */
-    abstract protected function processResponse(ResponseInterface $response);
+    abstract protected function processResponse(ResponseInterface $response, RequestInterface $request);
 
     /**
      * @author WN
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @throws ErrorResponseException
      */
-    abstract protected function processErrorResponse(ResponseInterface $response);
+    abstract protected function processErrorResponse(ResponseInterface $response, RequestInterface $request);
 }

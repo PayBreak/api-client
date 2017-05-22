@@ -10,10 +10,12 @@
 
 namespace PayBreak\ApiClient;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class CsvApiClient
+ * Csv Api Client
+ *
  * @author JH
  * @package PayBreak\ApiClient
  */
@@ -22,10 +24,11 @@ class CsvApiClient extends ApiClient
     /**
      * @author JH
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @return array
      * @throws WrongResponseException
      */
-    protected function processResponse(ResponseInterface $response)
+    protected function processResponse(ResponseInterface $response, RequestInterface $request)
     {
         if ($response->getStatusCode() == 204) {
             return [];

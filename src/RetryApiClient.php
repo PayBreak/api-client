@@ -69,10 +69,11 @@ class RetryApiClient extends AbstractRetryApiClient
     /**
      * @author WN
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @return array
      * @throws WrongResponseException
      */
-    protected function processResponse(ResponseInterface $response)
+    protected function processResponse(ResponseInterface $response, RequestInterface $request)
     {
         if ($response->getStatusCode() == 204) {
             return [];
@@ -90,9 +91,10 @@ class RetryApiClient extends AbstractRetryApiClient
     /**
      * @author WN
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @throws ErrorResponseException
      */
-    protected function processErrorResponse(ResponseInterface $response)
+    protected function processErrorResponse(ResponseInterface $response, RequestInterface $request)
     {
         if (($responseBody = json_decode($response->getBody()->getContents(), true)) &&
             array_key_exists('message', $responseBody)
