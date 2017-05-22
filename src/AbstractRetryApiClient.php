@@ -23,16 +23,14 @@ use GuzzleHttp\Middleware;
  */
 abstract class AbstractRetryApiClient extends AbstractApiClient
 {
-    // Number of times to retry.
-    // This can be overridden on the child class
-    const RETRY_ATTEMPTS = 3;
+    const DEFAULT_RETRY_ATTEMPTS = 3;
 
     /**
      * Set up retry middleware
      *
      * @author JH
      * @param array $config
-     * @return GuzzleHttp\ClientInterface
+     * @return \GuzzleHttp\ClientInterface
      */
     protected function initialiseClient(array $config = [])
     {
@@ -66,6 +64,6 @@ abstract class AbstractRetryApiClient extends AbstractApiClient
      */
     protected function getMaxRetries()
     {
-        return static::RETRY_ATTEMPTS;
+        return static::DEFAULT_RETRY_ATTEMPTS;
     }
 }
