@@ -31,10 +31,9 @@ class ApiClient extends AbstractApiClient
     }
 
     /**
-     * @author WN
+     * @author EB
      * @param ResponseInterface $response
      * @return array
-     * @throws WrongResponseException
      */
     protected function processResponse(ResponseInterface $response)
     {
@@ -42,13 +41,19 @@ class ApiClient extends AbstractApiClient
             return [];
         }
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseData = $response->getBody()->getContents();
+
+        $responseBody = json_decode($responseData, true);
 
         if (is_array($responseBody)) {
             return $responseBody;
         }
 
-        throw new WrongResponseException('Response body was malformed JSON', $response->getStatusCode());
+        return [
+            'response' => $responseData,
+            'code' => $response->getStatusCode(),
+            'headers' => $response->getHeaders()
+        ];
     }
 
     /**
