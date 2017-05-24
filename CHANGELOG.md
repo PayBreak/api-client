@@ -1,7 +1,10 @@
+## Features
+- Added `RequestInterface` to `processResponse` and `processErrorResponse`
+
 # 0.3.1
 2017-04-27
 
-### Fixed
+## Features
 - Now using Guzzle MockHandler to simulate csv download instead of downloading from an external url
 
 # 0.3.0
