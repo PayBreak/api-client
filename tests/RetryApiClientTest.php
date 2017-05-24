@@ -53,7 +53,7 @@ class RetryApiClientTest extends \PHPUnit_Framework_TestCase
             return $attempt['level'] === LogLevel::NOTICE;
         });
 
-        $this->assertEquals(RetryApiClient::RETRY_ATTEMPTS, count($attempts));
+        $this->assertEquals(RetryApiClient::DEFAULT_RETRY_ATTEMPTS, count($attempts));
     }
 
     /**

@@ -55,7 +55,7 @@ abstract class AbstractApiClient
     /**
      * @author JH
      * @param array $config
-     * @return GuzzleHttp\ClientInterface
+     * @return \GuzzleHttp\ClientInterface
      * @throws \Exception
      */
     protected function initialiseClient(array $config = [])
@@ -168,9 +168,9 @@ abstract class AbstractApiClient
 
         try {
             $response = $this->client->send($request, $options);
-            return $this->processResponse($response);
+            return $this->processResponse($response, $request);
         } catch (Exception\ClientException $e) {
-            $this->processErrorResponse($e->getResponse());
+            $this->processErrorResponse($e->getResponse(), $request);
             throw $e;
         } catch (Exception\BadResponseException $e) {
             $this->logError(
@@ -215,6 +215,8 @@ abstract class AbstractApiClient
     private function processHeaders(array $headers, array &$options)
     {
         $headers = array_merge($this->headers, $headers);
+
+        $headers['Content-Length'] = 0; // Issue https://github.com/guzzle/guzzle/issues/1645
 
         if (count($headers) > 0) {
             $options['headers'] = $headers;
@@ -271,15 +273,17 @@ abstract class AbstractApiClient
     /**
      * @author WN
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @return array
      * @throws WrongResponseException
      */
-    abstract protected function processResponse(ResponseInterface $response);
+    abstract protected function processResponse(ResponseInterface $response, RequestInterface $request);
 
     /**
      * @author WN
      * @param ResponseInterface $response
+     * @param RequestInterface $request
      * @throws ErrorResponseException
      */
-    abstract protected function processErrorResponse(ResponseInterface $response);
+    abstract protected function processErrorResponse(ResponseInterface $response, RequestInterface $request);
 }
