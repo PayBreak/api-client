@@ -42,7 +42,7 @@ This method is used to process successful response from an API to `array`. In th
  * @param ResponseInterface $response
  * @throws ErrorResponseException
  */
-protected abstract function processErrorResponse(ResponseInterface $response);
+protected abstract function processErrorResponse(ResponseInterface $response, RequestInterface $request);
 ```
 
 This method is called when `4xx` response was received and an expected error response is being processed. If an expected error is returned, the `ErrorResponseException` should be thrown with a meaningful message, so they can be handled in your application as *nice error response*.
