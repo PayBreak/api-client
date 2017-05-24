@@ -1,3 +1,6 @@
+# 1.0.0
+2017-05-24
+
 ## Features
 - Added `RequestInterface` to `processResponse` and `processErrorResponse`
 
