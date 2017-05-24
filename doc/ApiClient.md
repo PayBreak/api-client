@@ -18,7 +18,7 @@ Class should be extended to apply specific headers and authentication methods.
 protected abstract function processRequestBody(array $body);
 ```
 
-This method is used to add *body* to the request. It's should return *Guzzle* options array which will be merged with rest options.
+This method is used to add a *body* to the request. It's should return *Guzzle* options array which will be merged with the rest of the options.
 
 #### Response Body
 
@@ -29,10 +29,10 @@ This method is used to add *body* to the request. It's should return *Guzzle* op
  * @return array
  * @throws BadResponseException
  */
-protected abstract function processResponse(ResponseInterface $response);
+protected abstract function processResponse(ResponseInterface $response, RequestInterface $request);
 ```
 
-This method is used to process successful response form API to `array`. In case code is `2xx` but response could not be processed correctly method should thrown `BadResponseException`.
+This method is used to process successful response from an API to `array`. In the case that the code is a `2xx` response, but the response could not be processed correctly, the method should throw a `BadResponseException`.
 
 #### Error Response
 
@@ -45,7 +45,7 @@ This method is used to process successful response form API to `array`. In case 
 protected abstract function processErrorResponse(ResponseInterface $response);
 ```
 
-This method is called when `4xx` response was received and it's trying to process this response as expected error response, if so `ErrorResponseException` with user meaningful message should be thrown. And then handled in application as *nice error response*.
+This method is called when `4xx` response was received and an expected error response is being processed. If an expected error is returned, the `ErrorResponseException` should be thrown with a meaningful message, so they can be handled in your application as *nice error response*.
 
 All others `Exceptions` are thrown as from *GuzzleHttp*.
 
@@ -68,6 +68,3 @@ try {
     log($e->getMessage());
 }
 ```
-
-## Api Client
-Example implementation of `AbstractApiClient` for JSON API.
