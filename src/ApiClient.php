@@ -61,10 +61,16 @@ class ApiClient extends AbstractApiClient
      */
     protected function processErrorResponse(ResponseInterface $response, RequestInterface $request)
     {
-        if (($responseBody = json_decode($response->getBody()->getContents(), true)) &&
-            array_key_exists('message', $responseBody)
+        if (($responseBody = json_decode($response->getBody()->__toString(), true)) &&
+            (array_key_exists('message', $responseBody))
         ) {
             throw new ErrorResponseException($responseBody['message'], $response->getStatusCode());
+        }
+
+        if (($responseBody = json_decode($response->getBody()->__toString(), true)) &&
+            (array_key_exists('error', $responseBody))
+        ) {
+            throw new ErrorResponseException($responseBody['error'], $response->getStatusCode());
         }
     }
 }
