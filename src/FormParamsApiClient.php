@@ -14,12 +14,12 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Api Client
+ * Form Params Api Client
  *
  * @author WN
  * @package PayBreak\ApiClient
  */
-class ApiClient extends AbstractApiClient
+class FormParamsApiClient extends AbstractApiClient
 {
     /**
      * @author GK
