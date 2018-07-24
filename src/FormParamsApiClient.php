@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Form Params Api Client
  *
- * @author WN
+ * @author GK
  * @package PayBreak\ApiClient
  */
 class FormParamsApiClient extends AbstractApiClient
@@ -32,7 +32,7 @@ class FormParamsApiClient extends AbstractApiClient
     }
 
     /**
-     * @author WN
+     * @author GK
      * @param ResponseInterface $response
      * @param RequestInterface $request
      * @return array
@@ -54,7 +54,7 @@ class FormParamsApiClient extends AbstractApiClient
     }
 
     /**
-     * @author WN
+     * @author GK
      * @param ResponseInterface $response
      * @param RequestInterface $request
      * @throws ErrorResponseException
