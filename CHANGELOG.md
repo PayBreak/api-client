@@ -1,5 +1,8 @@
-## Changed
-- Scrutinizer config (154392323) (153057789)
+# 1.0.1
+2018-08-03
+## Features
+- Scrutinizer config (#154392323) (#153057789)
+- Api client that send data as form (#158903704)
 
 # 1.0.0
 2017-05-24
