@@ -29,6 +29,7 @@ abstract class AbstractApiClient
 {
     use PsrLoggerTrait;
 
+    /** @var ClientInterface */
     private $client;
     private $logger;
     private $headers;
@@ -42,7 +43,7 @@ abstract class AbstractApiClient
      */
     public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
-        $this->client = $this->initialiseClient($config);
+        $this->initialiseClient($config);
 
         if (!$this->client instanceof ClientInterface) {
             throw new \Exception('Implementation of AbstractApiClient must implement '. ClientInterface::class);
@@ -50,6 +51,27 @@ abstract class AbstractApiClient
 
         $this->logger = $logger;
         $this->headers = $headers;
+    }
+
+    /**
+     * @author EB
+     * @return ClientInterface
+     */
+    protected function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @author EB
+     * @param ClientInterface $client
+     * @return ClientInterface
+     */
+    protected function setClient(ClientInterface $client)
+    {
+        $this->client = $client;
+
+        return $this->client;
     }
 
     /**
@@ -167,7 +189,8 @@ abstract class AbstractApiClient
         $this->processHeaders($headers, $options);
 
         try {
-            $response = $this->client->send($request, $options);
+            $response = $this->getClient()->send($request, $options);
+
             return $this->processResponse($response, $request);
         } catch (Exception\ClientException $e) {
             $this->processErrorResponse($e->getResponse(), $request);
