@@ -44,7 +44,7 @@ abstract class AbstractApiClient
      */
     public function __construct(array $config = [], LoggerInterface $logger = null, array $headers = [])
     {
-        $this->initialiseClient($config);
+        $this->client = $this->initialiseClient($config);
 
         if (!$this->client instanceof ClientInterface) {
             throw new \Exception('Implementation of AbstractApiClient must implement '. ClientInterface::class);
