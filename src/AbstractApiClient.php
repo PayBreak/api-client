@@ -83,7 +83,7 @@ abstract class AbstractApiClient
      */
     protected function initialiseClient(array $config = [])
     {
-        return new Client($config);
+        return $this->setClient(new Client($config));
     }
 
     /**
