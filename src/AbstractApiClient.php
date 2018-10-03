@@ -13,6 +13,7 @@ namespace PayBreak\ApiClient;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -192,22 +193,33 @@ abstract class AbstractApiClient
             $response = $this->getClient()->send($request, $options);
 
             return $this->processResponse($response, $request);
-        } catch (Exception\ClientException $e) {
+        } catch (GuzzleException $e) {
+            $this->handleException($e, $request);
+        }
+    }
+
+    /**
+     * @author EB
+     * @param GuzzleException $e
+     * @param RequestInterface $request
+     */
+    protected function handleException(GuzzleException $e, RequestInterface $request)
+    {
+        if ($e instanceof Exception\ClientException) {
             $this->processErrorResponse($e->getResponse(), $request);
-            throw $e;
-        } catch (Exception\BadResponseException $e) {
+        } elseif ($e instanceof Exception\BadResponseException) {
             $this->logError(
                 'Api Bad Response from [' . $request->getUri() . '] Failed[' . $e->getResponse()->getStatusCode() . ']',
                 $this->formatBadResponseException($e)
             );
-            throw $e;
-        } catch (Exception\RequestException $e) {
+        } elseif ($e instanceof Exception\RequestException) {
             $this->logError(
                 'Api problem with request to [' . $request->getUri() . ']',
                 $this->formatRequestException($e)
             );
-            throw $e;
         }
+
+        throw $e;
     }
 
     /**
