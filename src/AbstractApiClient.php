@@ -13,6 +13,7 @@ namespace PayBreak\ApiClient;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -29,6 +30,7 @@ abstract class AbstractApiClient
 {
     use PsrLoggerTrait;
 
+    /** @var ClientInterface */
     private $client;
     private $logger;
     private $headers;
@@ -53,6 +55,27 @@ abstract class AbstractApiClient
     }
 
     /**
+     * @author EB
+     * @return ClientInterface
+     */
+    protected function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @author EB
+     * @param ClientInterface $client
+     * @return ClientInterface
+     */
+    protected function setClient(ClientInterface $client)
+    {
+        $this->client = $client;
+
+        return $this->client;
+    }
+
+    /**
      * @author JH
      * @param array $config
      * @return \GuzzleHttp\ClientInterface
@@ -60,7 +83,7 @@ abstract class AbstractApiClient
      */
     protected function initialiseClient(array $config = [])
     {
-        return new Client($config);
+        return $this->setClient(new Client($config));
     }
 
     /**
@@ -167,24 +190,36 @@ abstract class AbstractApiClient
         $this->processHeaders($headers, $options);
 
         try {
-            $response = $this->client->send($request, $options);
+            $response = $this->getClient()->send($request, $options);
+
             return $this->processResponse($response, $request);
-        } catch (Exception\ClientException $e) {
+        } catch (GuzzleException $e) {
+            $this->handleException($e, $request);
+        }
+    }
+
+    /**
+     * @author EB
+     * @param GuzzleException $e
+     * @param RequestInterface $request
+     */
+    protected function handleException(GuzzleException $e, RequestInterface $request)
+    {
+        if ($e instanceof Exception\ClientException) {
             $this->processErrorResponse($e->getResponse(), $request);
-            throw $e;
-        } catch (Exception\BadResponseException $e) {
+        } elseif ($e instanceof Exception\BadResponseException) {
             $this->logError(
                 'Api Bad Response from [' . $request->getUri() . '] Failed[' . $e->getResponse()->getStatusCode() . ']',
                 $this->formatBadResponseException($e)
             );
-            throw $e;
-        } catch (Exception\RequestException $e) {
+        } elseif ($e instanceof Exception\RequestException) {
             $this->logError(
                 'Api problem with request to [' . $request->getUri() . ']',
                 $this->formatRequestException($e)
             );
-            throw $e;
         }
+
+        throw $e;
     }
 
     /**
