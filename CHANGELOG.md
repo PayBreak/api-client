@@ -1,3 +1,7 @@
+# 1.0.2
+## Changed
+- Changed `AbstractApiClient` to allow direct usage of the client (#160763410)
+
 # 1.0.1
 2018-08-03
 ## Features
